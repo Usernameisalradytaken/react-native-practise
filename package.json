@@ -1,5 +1,5 @@
 {
-  "name": "AwesomeProject",
+  "name": "catenotes",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-firebase/app": "^17.3.2",
+    "@react-native-firebase/firestore": "^17.3.2",
     "react": "18.2.0",
     "react-native": "0.71.3"
   },

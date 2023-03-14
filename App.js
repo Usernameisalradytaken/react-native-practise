@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
+import {getAllNotes, deleteNote, addNote} from './services/apiservices';
 
 const style = StyleSheet.create({
   boldText: {
@@ -74,46 +75,18 @@ const style = StyleSheet.create({
 });
 
 const App = () => {
-  const [tasks, setTasks] = useState([
-    {
-      key: 0,
-      task: 'Default text',
-      desc: 'default desc',
-      date:
-        new Date().toJSON().slice(0, 10).replace(/-/g, '/') +
-        ' ' +
-        new Date().toLocaleTimeString(),
-    },
-    {
-      key: 1,
-      task: 'Default text',
-      desc: 'default desc',
-      date:
-        new Date().toJSON().slice(0, 10).replace(/-/g, '/') +
-        ' ' +
-        new Date().toLocaleTimeString(),
-    },
-    {
-      key: 2,
-      task: 'Default text',
-      desc: 'default desc',
-      date:
-        new Date().toJSON().slice(0, 10).replace(/-/g, '/') +
-        ' ' +
-        new Date().toLocaleTimeString(),
-    },
-    {
-      key: 3,
-      task: 'Default text',
-      desc: 'default desc',
-      date:
-        new Date().toJSON().slice(0, 10).replace(/-/g, '/') +
-        ' ' +
-        new Date().toLocaleTimeString(),
-    },
-  ]);
+  const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState('');
   const [desc, setDesc] = useState('');
+
+  useEffect( () => {
+    async function getAll() {
+      const data = await getAllNotes()
+      console.log(data)
+      setTask(data)
+    }
+    getAll()
+  },[]);
 
   const handleSubmit = () => {
     if (task == '' && desc == '') {
