@@ -1,16 +1,7 @@
 import firebase from '@react-native-firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import {Alert} from 'react-native';
-
-const firebaseConfig = {
-    apiKey: "AIzaSyDWcjhGvqct-Sjx7sEEqB8CfoDRqYmRoN4",
-    authDomain: "react-native-9be3f.firebaseapp.com",
-    projectId: "react-native-9be3f",
-    storageBucket: "react-native-9be3f.appspot.com",
-    messagingSenderId: "625384197096",
-    appId: "1:625384197096:web:9159f755bd4f68ba75725d",
-    measurementId: "G-P4BFTN2WXS"
-  };
+import firebaseConfig from './firebaseConfig.json'
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -20,19 +11,30 @@ const notesCollection = firestore().collection('Notes');
 
 async function getAllNotes() {
   try {
-    const notes = (await notesCollection.get()).docs();
-    return notes.docs;
+    // const notes = (await notesCollection.get());
+    const snapshot = await notesCollection.get();
+    let notes = [];
+    snapshot.forEach(doc => {
+      notes.push({key: doc.id, ...doc.data()});
+      // console.log(doc.id, '=>', doc.data());
+    });
+    // console.log(notes);
+    return notes;
   } catch (e) {
+    console.log(e);
     Alert.alert(e);
   }
 }
 
 async function addNote(data) {
   try {
-    const notes = await notesCollection.add(data);
+    // console.log(data);
+    const note = await notesCollection.add(data);
+    // console.log(note);
     // return doc id
-    return notes;
+    return note;
   } catch (e) {
+    console.log(e);
     Alert.alert(e);
   }
 }
@@ -41,11 +43,12 @@ async function deleteNote(id) {
   try {
     await notesCollection.doc(id).delete();
   } catch (e) {
+    console.log(e);
     Alert.alert(e);
   }
 }
 
-export default {
+export const apiService = {
   getAllNotes,
   deleteNote,
   addNote,

@@ -13,7 +13,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import {getAllNotes, deleteNote, addNote} from './services/apiservices';
+import {apiService} from './apiservices';
 
 const style = StyleSheet.create({
   boldText: {
@@ -79,22 +79,33 @@ const App = () => {
   const [task, setTask] = useState('');
   const [desc, setDesc] = useState('');
 
-  useEffect( () => {
+  useEffect(() => {
+    // console.log("hi");
     async function getAll() {
-      const data = await getAllNotes()
-      console.log(data)
-      setTask(data)
+      const data = await apiService.getAllNotes()
+      // console.log("-----------",data)
+      setTasks(data)
     }
     getAll()
-  },[]);
+  }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (task == '' && desc == '') {
       Alert.alert('Fields are Empty');
     } else {
+      console.log(task, desc);
+      const temp = await apiService.addNote({
+        task,
+        desc,
+        date:
+          new Date().toJSON().slice(0, 10).replace(/-/g, '/') +
+          ' ' +
+          new Date().toLocaleTimeString(),
+      });
+      console.log(temp.id);
       setTasks(prev => {
         prev.push({
-          key: Math.random() * 10000 + 1,
+          key: temp.id,
           task: task,
           desc: desc,
           date:
@@ -113,7 +124,9 @@ const App = () => {
     setDesc('');
   };
 
-  const deleteTaskHandler = id => {
+  const deleteTaskHandler = async id => {
+    console.log(id);
+    await apiService.deleteNote(id)
     setTasks(prev => {
       return prev.filter(item => item.key !== id);
     });
